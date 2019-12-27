@@ -4,6 +4,9 @@ let getters = {
     posts: state => {
         return state.posts
     },
+    items: state => {
+        return state.items
+    },
     errors: state => {
         return state.errors
     },

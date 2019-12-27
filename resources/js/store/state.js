@@ -1,5 +1,6 @@
 let state = {
     posts: [],
+    items: [],
     user: {},
     errors: {},
 }

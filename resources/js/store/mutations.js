@@ -1,13 +1,7 @@
 let mutations = {
-    CREATE_POST(state, post) {
-        state.posts.unshift(post)
-    },
-    FETCH_POSTS(state, posts) {
-        return state.posts = posts
-    },
-    DELETE_POST(state, post) {
-        let index = state.posts.findIndex(item => item.id === post.id)
-        state.posts.splice(index, 1)
+    DELETE_ITEM(state, item) {
+        let index = state.items.findIndex(item => item.id === item.id)
+        state.items.splice(index, 1)
     },
     CREATE_USER(state, user) {
         state.user = user;
@@ -17,7 +11,13 @@ let mutations = {
     },
     LOGIN_USER(state) {
         state.is_authenticate = true;
-    }
+    },
+    CREATE_ITEM(state, item) {
+        state.items.unshift(item)
+    },
+    FETCH_ITEM(state, items) {
+        return state.items = items
+    },
 
 }
 export default mutations

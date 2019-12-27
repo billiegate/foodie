@@ -2143,12 +2143,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -2284,9 +2278,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       form.append('description', description);
       this.loading = true;
       axios.post('/items', form).then(function (res) {
-        console.log(res); // let item = res.data.item
-        // this.message = "successful";
-        // this.$store.dispatch('loginitem', item);
+        console.log(res);
+        var item = res.data.item;
+        _this.message = res.data.message;
+
+        _this.$store.dispatch('addItem', item);
+
+        _this.item = {};
       })["catch"](function (err) {
         console.dir(err);
         _this.errors = err.response.data || {
@@ -2297,8 +2295,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         _this.loading = false;
       });
     }
-  },
-  watch: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['items', 'errors']))
+  }
 });
 
 /***/ }),
@@ -2355,6 +2352,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2375,9 +2378,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: "Items",
   data: function data() {
     return {
-      items: {},
       message: "",
       loading: false
     };
@@ -2387,14 +2390,16 @@ __webpack_require__.r(__webpack_exports__);
 
     this.loading = true;
     axios.get('/items').then(function (res) {
-      console.log(res);
-      _this.items = res.data;
+      console.log(res); // this.items = res.data
+
+      _this.$store.dispatch('fetchItems', res.data);
     })["catch"](function (err) {
       console.dir(err);
     })["finally"](function () {
       _this.loading = false;
     });
-  }
+  },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['items']))
 });
 
 /***/ }),
@@ -38768,22 +38773,27 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("div", { staticClass: "row" }, [
-      _c(
-        "div",
-        { staticClass: "col-lg-3 col-sm-6" },
+    _c(
+      "div",
+      { staticClass: "row" },
+      [
         _vm._l(_vm.items, function(item, i) {
-          return _c("item", { key: i, attrs: { item: item } })
+          return _c(
+            "div",
+            { key: i, staticClass: "col-lg-3 col-sm-6" },
+            [_c("item", { attrs: { item: item } })],
+            1
+          )
         }),
-        1
-      ),
-      _vm._v(" "),
-      Object.values(_vm.items).length === 0
-        ? _c("div", { staticClass: "well col-sm-12" }, [
-            _vm._v("\n            No food available yet\n        ")
-          ])
-        : _vm._e()
-    ]),
+        _vm._v(" "),
+        Object.values(_vm.items).length === 0
+          ? _c("div", { staticClass: "well col-sm-12" }, [
+              _vm._v("\n            No food available yet\n        ")
+            ])
+          : _vm._e()
+      ],
+      2
+    ),
     _vm._v(" "),
     _c("hr"),
     _vm._v(" "),
@@ -52491,38 +52501,26 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var actions = {
-  createPost: function createPost(_ref, post) {
+  deletePost: function deletePost(_ref, item) {
     var commit = _ref.commit;
-    axios.post('/api/posts', post).then(function (res) {
-      commit('CREATE_POST', res.data);
-    })["catch"](function (err) {
-      console.log(err);
-    });
+    commit('DELETE_POST', item);
   },
-  fetchPosts: function fetchPosts(_ref2) {
+  createUser: function createUser(_ref2, user) {
     var commit = _ref2.commit;
-    axios.get('/api/posts').then(function (res) {
-      commit('FETCH_POSTS', res.data);
-    })["catch"](function (err) {
-      console.log(err);
-    });
-  },
-  deletePost: function deletePost(_ref3, post) {
-    var commit = _ref3.commit;
-    axios["delete"]("/api/posts/".concat(post.id)).then(function (res) {
-      if (res.data === 'ok') commit('DELETE_POST', post);
-    })["catch"](function (err) {
-      console.log(err);
-    });
-  },
-  createUser: function createUser(_ref4, user) {
-    var commit = _ref4.commit;
     commit('CREATE_USER', user);
   },
-  loginUser: function loginUser(_ref5, token) {
-    var commit = _ref5.commit;
+  loginUser: function loginUser(_ref3, token) {
+    var commit = _ref3.commit;
     localStorage.setItem("foodie_token", token);
     commit('LOGIN_USER', token);
+  },
+  addItem: function addItem(_ref4, item) {
+    var commit = _ref4.commit;
+    commit('CREATE_ITEM', item);
+  },
+  fetchItems: function fetchItems(_ref5, items) {
+    var commit = _ref5.commit;
+    commit('FETCH_ITEM', items);
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (actions);
@@ -52543,6 +52541,9 @@ __webpack_require__.r(__webpack_exports__);
 var getters = {
   posts: function posts(state) {
     return state.posts;
+  },
+  items: function items(state) {
+    return state.items;
   },
   errors: function errors(state) {
     return state.errors;
@@ -52597,17 +52598,11 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var mutations = {
-  CREATE_POST: function CREATE_POST(state, post) {
-    state.posts.unshift(post);
-  },
-  FETCH_POSTS: function FETCH_POSTS(state, posts) {
-    return state.posts = posts;
-  },
-  DELETE_POST: function DELETE_POST(state, post) {
-    var index = state.posts.findIndex(function (item) {
-      return item.id === post.id;
+  DELETE_ITEM: function DELETE_ITEM(state, item) {
+    var index = state.items.findIndex(function (item) {
+      return item.id === item.id;
     });
-    state.posts.splice(index, 1);
+    state.items.splice(index, 1);
   },
   CREATE_USER: function CREATE_USER(state, user) {
     state.user = user;
@@ -52617,6 +52612,12 @@ var mutations = {
   },
   LOGIN_USER: function LOGIN_USER(state) {
     state.is_authenticate = true;
+  },
+  CREATE_ITEM: function CREATE_ITEM(state, item) {
+    state.items.unshift(item);
+  },
+  FETCH_ITEM: function FETCH_ITEM(state, items) {
+    return state.items = items;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (mutations);
@@ -52634,6 +52635,7 @@ var mutations = {
 __webpack_require__.r(__webpack_exports__);
 var state = {
   posts: [],
+  items: [],
   user: {},
   errors: {}
 };

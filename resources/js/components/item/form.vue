@@ -139,10 +139,10 @@
                 axios.post('/items', form)
                 .then(res => {
                     console.log(res)
-                    // let item = res.data.item
-                    // this.message = "successful";
-                    // this.$store.dispatch('loginitem', item);
-                    
+                    let item = res.data.item
+                    this.message = res.data.message;
+                    this.$store.dispatch('addItem', item);
+                    this.item = {}
                 }).catch(err => {
                     console.dir(err)
                     this.errors = err.response.data || {message: err.response.statusText};
@@ -151,12 +151,6 @@
                     this.loading = false
                 });
             }
-        },
-        watch: {
-            ...mapGetters([
-                'items',
-                'errors'
-            ])
         }
     }
 </script>
