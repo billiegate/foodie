@@ -18,6 +18,18 @@ Endpoints are varied between
 
 this is to ensure both web and app are properly served
 
+## RUN APP
+
+to run this app please follow the following steps
+- clone the repo
+- run composer install
+- on your phpmyadmin create a db named "foodie"
+- run php artisan migrate
+- npm install
+- php artisan serve
+- npm run dev
+- and visit [http://localhost:8000](http://localhost:8000)
+
 ## REST ENDPOINT
 
 - **[user loginc - POST /api/auth/login/user ](/api/auth/login/user)**
